@@ -146,6 +146,31 @@ namespace Dicom
         }
 
         /// <summary>
+        /// Asynchronously save DICOM file to stream.
+        /// </summary>
+        /// <param name="stream">Stream on which to save DICOM file.</param>
+        /// <returns>Awaitable task.</returns>
+        public async Task SaveAsync(Stream stream)
+        {
+            if (this.Format == DicomFileFormat.ACRNEMA1 || this.Format == DicomFileFormat.ACRNEMA2)
+            {
+                throw new DicomFileException(this, "Unable to save ACR-NEMA file");
+            }
+
+            if (this.Format == DicomFileFormat.DICOM3NoFileMetaInfo)
+            {
+                // create file meta information from dataset
+                this.FileMetaInfo = new DicomFileMetaInformation(this.Dataset);
+            }
+
+            this.OnSave();
+
+            var target = new StreamByteTarget(stream);
+            var writer = new DicomFileWriter(DicomWriteOptions.Default);
+            await writer.WriteAsync(target, this.FileMetaInfo, this.Dataset).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Reads the specified filename and returns a DicomFile object.  Note that the values for large
         /// DICOM elements (e.g. PixelData) are read in "on demand" to conserve memory.  Large DICOM elements
         /// are determined by their size in bytes - see the default value for this in the FileByteSource._largeObjectSize
@@ -392,6 +417,50 @@ namespace Dicom
         public override string ToString()
         {
             return string.Format("DICOM File [{0}]", this.Format);
+        }
+
+        /// <summary>
+        /// Reads the specified file and returns a DicomFile object.  Note that the values for large
+        /// DICOM elements (e.g. PixelData) are read in "on demand" to conserve memory.  Large DICOM elements
+        /// are determined by their size in bytes - see the default value for this in the FileByteSource._largeObjectSize
+        /// </summary>
+        /// <param name="file">The file reference of the DICOM file</param>
+        /// <param name="fallbackEncoding">Encoding to apply when attribute Specific Character Set is not available.</param>
+        /// <returns>DicomFile instance</returns>
+        internal static DicomFile Open(IFileReference file, Encoding fallbackEncoding)
+        {
+            if (fallbackEncoding == null)
+            {
+                throw new ArgumentNullException("fallbackEncoding");
+            }
+            DicomFile df = new DicomFile();
+
+            try
+            {
+                df.File = file;
+
+                using (var source = new FileByteSource(file))
+                {
+                    DicomFileReader reader = new DicomFileReader();
+                    if (reader.Read(
+                        source,
+                        new DicomDatasetReaderObserver(df.FileMetaInfo),
+                        new DicomDatasetReaderObserver(df.Dataset, fallbackEncoding)) == DicomReaderResult.Error)
+                    {
+                        return null;
+                    }
+
+                    df.Format = reader.FileFormat;
+
+                    df.Dataset.InternalTransferSyntax = reader.Syntax;
+
+                    return df;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new DicomFileException(df, e.Message, e);
+            }
         }
 
         #endregion

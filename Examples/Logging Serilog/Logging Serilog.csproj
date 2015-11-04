@@ -38,19 +38,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Serilog, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Serilog.1.5.7\lib\net45\Serilog.dll</HintPath>
+      <HintPath>..\..\packages\Serilog.1.5.12\lib\net45\Serilog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Serilog.FullNetFx, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Serilog.1.5.7\lib\net45\Serilog.FullNetFx.dll</HintPath>
+      <HintPath>..\..\packages\Serilog.1.5.12\lib\net45\Serilog.FullNetFx.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Serilog.Sinks.Literate, Version=1.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Serilog.Sinks.Literate.1.1.0\lib\net45\Serilog.Sinks.Literate.dll</HintPath>
+      <HintPath>..\..\packages\Serilog.Sinks.Literate.1.2.0\lib\net45\Serilog.Sinks.Literate.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Serilog.Sinks.Seq, Version=1.5.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Serilog.Sinks.Seq.1.5.15\lib\net45\Serilog.Sinks.Seq.dll</HintPath>
+      <HintPath>..\..\packages\Serilog.Sinks.Seq.1.5.17\lib\net45\Serilog.Sinks.Seq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -70,13 +70,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DICOM\DICOM.csproj">
-      <Project>{D6E309B0-4837-459E-8C85-ABC268440D62}</Project>
-      <Name>DICOM</Name>
+    <ProjectReference Include="..\..\DICOM.Platform\Desktop\DICOM.Desktop.csproj">
+      <Project>{59b38770-d2e7-40b9-8d27-a20691f1caa9}</Project>
+      <Name>DICOM.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\logging\DICOM.Serilog\DICOM.Serilog.csproj">
-      <Project>{E3C3DF86-3B14-4E9E-8572-F3B6E147CF77}</Project>
-      <Name>DICOM.Serilog</Name>
+    <ProjectReference Include="..\..\DICOM\DICOM.Core.csproj">
+      <Project>{a661d347-cf7d-4f36-8101-0544ae85eeec}</Project>
+      <Name>DICOM.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Logging\DICOM.Serilog.Desktop\DICOM.Serilog.Desktop.csproj">
+      <Project>{e3c3df86-3b14-4e9e-8572-f3b6e147cf77}</Project>
+      <Name>DICOM.Serilog.Desktop</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
